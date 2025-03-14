@@ -1,0 +1,14 @@
+<div class="doc-container">
+    <div class="doc-page">
+      <div
+        v-for="(block, index) in blocks"
+        :key="index"
+        contenteditable="true"
+        ref="blockRefs"
+        class="doc-block"
+        @keydown="handleKeydown($event, index)"
+        @input="updateBlock($event, index)"
+        :data-placeholder="block === '' ? 'Nhập văn bản...' : ''"
+      ></div>
+    </div>
+  </div>
