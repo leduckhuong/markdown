@@ -27,7 +27,6 @@
   min-height: 20px;
   padding: 5px;
   outline: none;
-  border-bottom: 1px solid #ddd;
   margin-bottom: 5px;
   cursor: text;
   white-space: pre-wrap; /* Giữ xuống dòng */

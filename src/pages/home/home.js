@@ -11,7 +11,7 @@ export default {
     insertLineBreak() {
       const selection = window.getSelection();
       if (!selection.rangeCount) return;
-      
+
       const range = selection.getRangeAt(0);
       
       // Tạo các phần tử cần chèn
@@ -42,17 +42,17 @@ export default {
       
       // Đảm bảo con trỏ hiển thị bằng cách focus lại vào phần tử
       document.activeElement.focus();
-    },    
+    },
     async handleKeydown(event, index) {
       if (event.key === "Enter") {
         event.preventDefault();
         if (event.shiftKey) {
-          // document.execCommand('insertHTML', false, '<br><span>\u200B</span>');
+          
           this.insertLineBreak();
-          // \u200B là ký tự zero-width space, giúp con trỏ có thể di chuyển đến sau thẻ <br>
+          
         } else {
           // Enter: Tạo block mới
-          this.blocks.splice(index + 1, 0, ""); 
+          this.blocks.splice(index + 1, 0, "");  // splice(index, deleteElement, addNewElement)
           await nextTick(); // Chờ Vue cập nhật DOM
           if (this.$refs.blockRefs[index + 1]) {
             this.$refs.blockRefs[index + 1].focus();
@@ -60,12 +60,23 @@ export default {
         }
       }
       // Xóa block nếu trống và nhấn Backspace
-      if (event.key === "Backspace" && this.blocks[index] === "" && index > 0) {
+      if (event.key === "Backspace" && (this.blocks[index] === "" || this.blocks[index] === "<br>") && index > 0) {
         event.preventDefault();
         this.blocks.splice(index, 1); // Xóa block
         await nextTick();
-        if (this.$refs.blockRefs[index - 1]) {
-          this.$refs.blockRefs[index - 1].focus();
+
+        const prevBlock = this.$refs.blockRefs[index - 1];
+        if (prevBlock) {
+          prevBlock.focus();
+
+          // Đưa con trỏ đến cuối nội dung của block trước đó
+          const range = document.createRange();
+          const selection = window.getSelection();
+          range.selectNodeContents(prevBlock);
+          range.collapse(false); // false = đặt con trỏ ở cuối
+
+          selection.removeAllRanges();
+          selection.addRange(range);
         }
       }
     },
